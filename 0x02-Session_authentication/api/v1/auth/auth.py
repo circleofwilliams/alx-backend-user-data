@@ -1,34 +1,23 @@
 #!/usr/bin/env python3
 """
-Definition of class Auth
+Auth module for the API
 """
+import os
 from flask import request
-from typing import (
-    List,
-    TypeVar
-)
+from typing import List, TypeVar
 
 
-class Auth:
+class Auth():
+    """Auth class
     """
-    Manages the API authentication
-    """
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """
-        Determines whether a given path requires authentication or not
-        Args:
-            - path(str): Url path to be checked
-            - excluded_paths(List of str): List of paths that do not require
-              authentication
-        Return:
-            - True if path is not in excluded_paths, else False
+        """method to enforce auth
         """
         if path is None:
             return True
         elif excluded_paths is None or excluded_paths == []:
             return True
-        elif path in excluded_paths:
-            return False
         else:
             for i in excluded_paths:
                 if i.startswith(path):
@@ -41,18 +30,20 @@ class Auth:
         return True
 
     def authorization_header(self, request=None) -> str:
+        """method for auth_header
         """
-        Returns the authorization header from a request object
-        """
-        if request is None:
-            return None
-        header = request.headers.get('Authorization')
-        if header is None:
-            return None
-        return header
+        if request:
+            return request.headers.get('Authorization')
+        return None
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """
-        Returns a User instance from information from a request object
+        """method that returns user
         """
         return None
+
+    def session_cookie(self, request=None):
+        """A method that returns a cookie value from a request
+        """
+        if request:
+            return request.cookies.get(os.getenv('SESSION_NAME'))
+        return request
